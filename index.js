@@ -24,7 +24,7 @@ const db = mysql.createPool({
 });
 
 app.get("/list", (req, res) => {
-    const sqlQuery = "SELECT BOARD_ID, BOARD_TITLE, REGISTER_ID, DATE_FORMAT(REGISTER_DATE, '%Y-%m-%d') AS REGISTER_DATE FROM BOARD;";
+    const sqlQuery = "SELECT EMPLOYEE_ID, EMPLOYEE_NM,TEL_NO, MAIN_ADDRESS, DATE_FORMAT(REGISTER_DATE, '%Y-%m-%d') AS REGISTER_DATE FROM STORE_BASIC_CONFIG;";
 
     db.query(sqlQuery, (err, result) => {
         if (result) {
@@ -40,24 +40,26 @@ app.get("/list", (req, res) => {
 app.post("/insert", (req, res) => {
 
     res.set({ 'Access-Control-Allow-Origin': '*' });
-    var title = req.body.title;
-    var content = req.body.content;
+    var name = req.body.name;
+    var tel = req.body.tel;
+    var mail = req.body.mail;
 
     const sqlQuery =
-        "INSERT INTO BOARD (BOARD_TITLE, BOARD_CONTENT, REGISTER_ID) VALUES (?,?,'artistJay');";
-    db.query(sqlQuery, [title, content], (err, result) => {
+        "INSERT INTO STORE_BASIC_CONFIG (EMPLOYEE_NM, TEL_NO, MAIN_ADDRESS) VALUES (?,?,?);";
+    db.query(sqlQuery, [name, tel, mail], (err, result) => {
         res.send(result);
     });
 });
 
 app.post("/update", (req, res) => {
     var id = req.body.id;
-    var title = req.body.title;
-    var content = req.body.content;
+    var name = req.body.name;
+    var tel = req.body.tel;
+    var mail = req.body.mail;
 
     const sqlQuery =
-        "UPDATE BOARD SET BOARD_TITLE = ?, BOARD_CONTENT = ?, UPDATER_ID = 'artistJay' WHERE BOARD_ID = ?;";
-    db.query(sqlQuery, [title, content, id], (err, result) => {
+        "UPDATE STORE_BASIC_CONFIG SET EMPLOYEE_NM = ?, TEL_NO = ?, MAIN_ADDRESS = ?,UPDATER_ID = 'artistJay' WHERE EMPLOYEE_ID = ?;";
+    db.query(sqlQuery, [name, tel, mail, id], (err, result) => {
         res.send(result);
     });
 });
@@ -66,7 +68,7 @@ app.post("/detail", (req, res) => {
     const id = req.body.id;
 
     const sqlQuery =
-        "SELECT BOARD_ID, BOARD_TITLE, BOARD_CONTENT FROM BOARD WHERE BOARD_ID = ?;";
+        "SELECT EMPLOYEE_ID, EMPLOYEE_NM, TEL_NO FROM STORE_BASIC_CONFIG WHERE EMPLOYEE_ID = ?;";
     db.query(sqlQuery, [id], (err, result) => {
         res.send(result);
     });
@@ -75,9 +77,8 @@ app.post("/detail", (req, res) => {
 app.post("/delete", (req, res) => {
     const id = req.body.boardIdList;
 
-    const sqlQuery = "DELETE FROM BOARD WHERE BOARD_ID IN (?)";
-    // const sqlQuery = `DELETE FROM BOARD WHERE BOARD_ID IN (${id.join()})`;
-    db.query(sqlQuery, [id], (err, result) => {
+    const sqlQuery = `DELETE FROM STORE_BASIC_CONFIG WHERE EMPLOYEE_ID IN (${id})`;
+    db.query(sqlQuery, (err, result) => {
         res.send(result);
     });
 });
